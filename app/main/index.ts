@@ -154,7 +154,7 @@ function createMainWindow(): BrowserWindow {
     app.quit();
     return;
   }
-  
+
   await app.whenReady();
 
   if (process.env.GDK_BACKEND !== GDK_BACKEND) {
