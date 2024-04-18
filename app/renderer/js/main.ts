@@ -1076,6 +1076,7 @@ export class ServerManagerView {
         webview.setZoomLevel(zoomLevel);
         i += 1;
       }
+
       console.log(i);
     });
 
