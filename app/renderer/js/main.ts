@@ -1067,6 +1067,18 @@ export class ServerManagerView {
       },
     );
 
+    ipcRenderer.on("sync-zoom-factors", (event, zoomLevel: number) => {
+      console.log("it's happening...too much is fucking changed lmfao");
+      const webviewsElts = document.querySelectorAll("webview-pane");
+      let i = 0;
+      for (const webviewElt of webviewsElts) {
+        const webview = webviewElt as Electron.WebviewTag;
+        webview.setZoomLevel(zoomLevel);
+        i += 1;
+      }
+      console.log(i);
+    });
+
     ipcRenderer.on(
       "update-realm-icon",
       async (event, serverURL: string, iconURL: string) => {

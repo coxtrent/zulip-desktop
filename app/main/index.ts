@@ -279,13 +279,6 @@ function createMainWindow(): BrowserWindow {
     }
   });
 
-  ipcMain.on("zoom-other-tabs", (event, zoomLevel) => {
-    const windows = BrowserWindow.getAllWindows();
-    for (const window of windows) {
-      window.webContents.setZoomLevel(zoomLevel);
-    }
-  });
-
   ipcMain.on("fetch-user-agent", (event) => {
     event.returnValue = session
       .fromPartition("persist:webviewsession")

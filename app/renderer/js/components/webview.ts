@@ -230,9 +230,11 @@ export default class WebView {
   private syncZooms(): void {
     // Sync zoom level with other tabs if useOneZoom is enabled
     const useOneZoom = ConfigUtil.getConfigItem("useOneZoom", true);
+    console.log("useOneZoom", useOneZoom);
     if (useOneZoom) {
       const zoomLevel = this.getWebContents().getZoomLevel();
-      ipcRenderer.send("zoom-other-tabs", zoomLevel);
+      console.log("Syncing zoom level", zoomLevel);
+      ipcRenderer.send("sync-zoom-factors", zoomLevel);
     }
   }
 

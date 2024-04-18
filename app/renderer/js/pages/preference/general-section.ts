@@ -279,7 +279,8 @@ export function initGeneralSection({$root}: GeneralSectionProperties): void {
         ConfigUtil.setConfigItem("useOneZoom", newValue);
         useOneZoom();
         if (newValue) {
-          ipcRenderer.send("zoom-other-tabs", 1);
+          console.log("sending sync-zoom-factors");
+          ipcRenderer.sendToHost("sync-zoom-factors", 1);
         }
       },
     });
