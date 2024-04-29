@@ -129,6 +129,14 @@ export class ServerManagerView {
     this.tabIndex = 0;
   }
 
+  async activateSyncZooms(): Promise<void> {
+    console.log("yes its received!");
+    const tab = this.tabs[this.activeTabIndex];
+    if (tab instanceof ServerTab) {
+      const zoom = (await tab.webview).getZoom();
+      this.syncZooms(zoom);
+    }
+  }
   async init(): Promise<void> {
     initializeTray(this);
     await this.loadProxy();
@@ -419,6 +427,7 @@ export class ServerManagerView {
     });
     this.tabs.push(tab);
     this.loading.add(server.url);
+    ipcRenderer.send("sync-zooms");
     return tab;
   }
 
@@ -887,21 +896,21 @@ export class ServerManagerView {
         "zoomIn",
         (webview) => {
           webview.zoomIn();
-          this.syncZooms(webview.getZoomFactor());
+          this.syncZooms(webview.getZoom());
         },
       ],
       [
         "zoomOut",
         (webview) => {
           webview.zoomOut();
-          this.syncZooms(webview.getZoomFactor());
+          this.syncZooms(webview.getZoom());
         },
       ],
       [
         "zoomActualSize",
         (webview) => {
           webview.zoomActualSize();
-          this.syncZooms(webview.getZoomFactor());
+          this.syncZooms(webview.getZoom());
         },
       ],
       [
@@ -987,6 +996,8 @@ export class ServerManagerView {
     });
 
     ipcRenderer.on("reload-viewer", this.reloadView.bind(this));
+
+    ipcRenderer.on("sync-zooms", this.activateSyncZooms.bind(this));
 
     ipcRenderer.on("reload-current-viewer", this.reloadCurrentView.bind(this));
 
@@ -1089,7 +1100,7 @@ export class ServerManagerView {
     );
 
     ipcRenderer.on("sync-zooms", () => {
-      this.syncZooms();
+      console.log("BRO!");
     });
 
     ipcRenderer.on("enter-fullscreen", () => {
@@ -1185,22 +1196,15 @@ export class ServerManagerView {
     });
   }
 
-  private syncZooms(value = 1): void {
+  async syncZooms(value: number): Promise<void> {
     const shouldUseOneZoom = ConfigUtil.getConfigItem("useOneZoom", true);
     if (shouldUseOneZoom) {
-      for (const tab of this.tabs) {
-        if (tab instanceof ServerTab) {
-          tab.webview
-            .then((webv) => {
-              webv.setZoomFactor(value);
-            })
-            .catch((error) => {
-              console.error("Error syncing zoom factors:", error);
-            });
-        }
-      }
+      this.tabs.map(async (tab) => {
+        if (tab instanceof ServerTab) (await tab.webview).setZoom(value);
+      });
     }
   }
+
 }
 
 window.addEventListener("load", async () => {

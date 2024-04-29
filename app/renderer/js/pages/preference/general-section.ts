@@ -279,6 +279,7 @@ export function initGeneralSection({$root}: GeneralSectionProperties): void {
         ConfigUtil.setConfigItem("useOneZoom", newValue);
         useOneZoom();
         if (newValue) {
+          console.log("sending message... is message received?");
           ipcRenderer.send("sync-zooms");
         }
       },
