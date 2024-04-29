@@ -177,6 +177,7 @@ export class ServerManagerView {
     const settingOptions: Partial<Config> = {
       autoHideMenubar: false,
       useOneZoom: true,
+      defaultZoom: 1,
       trayIcon: true,
       useManualProxy: false,
       useSystemProxy: false,
@@ -1185,20 +1186,20 @@ export class ServerManagerView {
     });
   }
 
-  private syncZooms(value = 1): void {
+  async syncZooms(level = -1): Promise<void> {
     const shouldUseOneZoom = ConfigUtil.getConfigItem("useOneZoom", true);
     if (shouldUseOneZoom) {
-      for (const tab of this.tabs) {
-        if (tab instanceof ServerTab) {
-          tab.webview
-            .then((webv) => {
-              webv.setZoomFactor(value);
-            })
-            .catch((error) => {
-              console.error("Error syncing zoom factors:", error);
-            });
-        }
+      if (level === -1) {
+        level = ConfigUtil.getConfigItem("defaultZoom", 1);
       }
+      else {
+        ConfigUtil.setConfigItem("defaultZoom", level);
+      }
+      this.tabs.map(async (tab) => {
+        if (tab instanceof ServerTab) {
+          (await tab.webview).setZoomFactor(level);
+        }
+      });
     }
   }
 }

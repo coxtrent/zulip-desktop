@@ -451,6 +451,11 @@ ${error}`,
     },
   );
 
+  ipcMain.on("sync-zooms", (_event) => {
+      _event.reply("sync-zooms");
+    },
+  );
+
   ipcMain.on("save-last-tab", (_event, index: number) => {
     ConfigUtil.setConfigItem("lastActiveTab", index);
   });

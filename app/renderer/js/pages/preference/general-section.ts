@@ -280,6 +280,7 @@ export function initGeneralSection({$root}: GeneralSectionProperties): void {
         useOneZoom();
         if (newValue) {
           ipcRenderer.send("sync-zooms");
+          ConfigUtil.setConfigItem("defaultZoom", 1);
         }
       },
     });
